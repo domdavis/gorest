@@ -5,6 +5,8 @@ endpoint using JSON. The package user deals with Go types representing the
 request and response models avoiding _stringly_ typed models and overuse of
 `map[string]interface{}`.
 
+[ ![Codeship Status for domdavis/rest](https://app.codeship.com/projects/4f4ea6a0-126f-0135-3216-027699a88aa9/status?branch=master)](https://app.codeship.com/projects/217087)
+
 ## Installation
 
 ```bash
