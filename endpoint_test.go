@@ -7,7 +7,9 @@ import (
 	"net/http/httptest"
 
 	"github.com/domdavis/rest"
-	"github.com/dustin/gojson"
+
+	"encoding/json"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
