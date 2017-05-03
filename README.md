@@ -1,11 +1,14 @@
+[![license](https://img.shields.io/github/license/domdavis/rest.svg)](https://github.com/domdavis/rest/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/domdavis/rest/all.svg)](https://github.com/domdavis/rest/releases)
+[![Codeship](https://img.shields.io/codeship/4f4ea6a0-126f-0135-3216-027699a88aa9/master.svg)](https://app.codeship.com/projects/217087)
+[![](https://img.shields.io/github/issues-raw/domdavis/rest.svg)](https://github.com/domdavis/rest/issues)
+
 # RESTful package for Go
 
 The REST package provides RESTful semantics to communicating with as REST
 endpoint using JSON. The package user deals with Go types representing the 
 request and response models avoiding _stringly_ typed models and overuse of
 `map[string]interface{}`.
-
-[ ![Codeship Status for domdavis/rest](https://app.codeship.com/projects/4f4ea6a0-126f-0135-3216-027699a88aa9/status?branch=master)](https://app.codeship.com/projects/217087)
 
 ## Installation
 
