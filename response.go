@@ -28,6 +28,10 @@ type response struct {
 	response *http.Response
 }
 
+// NewResponse creates a REST response from an HTTP response. When creating the
+// REST response the body of the HTTP response is read and closed. An error is
+// returned if there was a problem reading the response location, the response
+// body, or if the response wasn't a http.StatusOK or http.StatusCreated.
 func NewResponse(res *http.Response) (Response, error) {
 	defer res.Body.Close()
 	r := &response{response: res}
