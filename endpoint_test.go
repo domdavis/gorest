@@ -8,13 +8,15 @@ import (
 
 	"encoding/json"
 
+	"fmt"
+
 	"github.com/domdavis/gorest"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestEndpoint_Get(t *testing.T) {
 	Convey("Calling an endpoint that supports GET", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
@@ -36,7 +38,7 @@ func TestEndpoint_Get(t *testing.T) {
 	})
 
 	Convey("Calling an endpoint that does not support GET ", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
@@ -56,7 +58,7 @@ func TestEndpoint_Get(t *testing.T) {
 
 func TestEndpoint_Put(t *testing.T) {
 	Convey("Calling an endpoint that supports PUT", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
@@ -78,7 +80,7 @@ func TestEndpoint_Put(t *testing.T) {
 	})
 
 	Convey("Calling an endpoint that does not support PUT", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
@@ -98,7 +100,7 @@ func TestEndpoint_Put(t *testing.T) {
 
 func TestEndpoint_Post(t *testing.T) {
 	Convey("Calling an endpoint that supports POST", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
@@ -120,7 +122,7 @@ func TestEndpoint_Post(t *testing.T) {
 	})
 
 	Convey("Calling an endpoint that does not support POST", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
@@ -140,7 +142,7 @@ func TestEndpoint_Post(t *testing.T) {
 
 func TestEndpoint_Delete(t *testing.T) {
 	Convey("Calling an endpoint that supports DELETE", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
@@ -162,7 +164,7 @@ func TestEndpoint_Delete(t *testing.T) {
 	})
 
 	Convey("Calling an endpoint that does not support DELETE", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
@@ -184,7 +186,7 @@ func TestEndpoint(t *testing.T) {
 	Convey("Calling an endpoint with an invalid hostname", t, func() {
 
 		e := gorest.New("http://\\", gorest.MethodGet)
-		r, err := e.Get(http.Header{})
+		r, err := e.Get(gorest.BasicHeader())
 
 		Convey("Will not return a response", func() {
 			So(r, ShouldBeNil)
@@ -198,7 +200,7 @@ func TestEndpoint(t *testing.T) {
 	})
 
 	Convey("Calling an endpoint with an invalid body", t, func() {
-		h := http.Header{}
+		h := gorest.BasicHeader()
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
@@ -217,7 +219,7 @@ func TestEndpoint(t *testing.T) {
 
 	Convey("Calling an endpoint with an invalid URL", t, func() {
 		e := gorest.New("invalid", gorest.MethodGet)
-		r, err := e.Get(http.Header{})
+		r, err := e.Get(gorest.BasicHeader())
 
 		Convey("Will not return a response", func() {
 			So(r, ShouldBeNil)
@@ -231,6 +233,29 @@ func TestEndpoint(t *testing.T) {
 	})
 }
 
+func TestSecureEndpoint(t *testing.T) {
+	Convey("Calling a secure endpoint", t, func() {
+		username, password := "username", "password"
+		h := gorest.AuthHeader(username, password)
+		s := testSecureEndpoint()
+		defer s.Close()
+
+		e := gorest.New(s.URL, gorest.MethodGet)
+		r, err := e.Get(h)
+
+		Convey("Will return a populated response", func() {
+			So(r, ShouldNotBeNil)
+			So(r.Body(), ShouldNotBeEmpty)
+			So(string(r.Body()), ShouldStartWith, username)
+			So(string(r.Body()), ShouldEndWith, password)
+		})
+
+		Convey("Will not return an error", func() {
+			So(err, ShouldBeNil)
+		})
+	})
+}
+
 func testEndpoint(code int, body interface{}) *httptest.Server {
 	b, _ := json.MarshalIndent(body, "", "    ")
 	server := httptest.NewServer(http.HandlerFunc(
@@ -239,6 +264,19 @@ func testEndpoint(code int, body interface{}) *httptest.Server {
 			w.Header().Set("Location", "http://localhost")
 			w.WriteHeader(code)
 			w.Write(b)
+		}))
+
+	return server
+}
+
+func testSecureEndpoint() *httptest.Server {
+	server := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			username, password, _ := r.BasicAuth()
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Location", "http://localhost")
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, "%s:%s", username, password)
 		}))
 
 	return server

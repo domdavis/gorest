@@ -11,18 +11,18 @@ import (
 // certain methods.
 type Endpoint interface {
 	// Get makes an HTTP GET request to the endpoint URL.
-	Get(http.Header) (Response, error)
+	Get(Header) (Response, error)
 
 	// Delete makes an HTTP DELETE request to the endpoint URL.
-	Delete(http.Header) (Response, error)
+	Delete(Header) (Response, error)
 
 	// Put makes an HTTP PUT request using the JSON representation of the
 	// provided type as the request body.
-	Put(http.Header, interface{}) (Response, error)
+	Put(Header, interface{}) (Response, error)
 
 	// Post makes an HTTP POST request using the JSON representation of the
 	// provided type as the request body.
-	Post(http.Header, interface{}) (Response, error)
+	Post(Header, interface{}) (Response, error)
 }
 
 type endpoint struct {
@@ -42,24 +42,24 @@ func New(url string, methods ...method) Endpoint {
 	return &endpoint{url: url, methods: allowed}
 }
 
-func (e *endpoint) Get(header http.Header) (Response, error) {
+func (e *endpoint) Get(header Header) (Response, error) {
 	return e.call(http.MethodGet, header, nil)
 }
 
-func (e *endpoint) Delete(header http.Header) (Response, error) {
+func (e *endpoint) Delete(header Header) (Response, error) {
 	return e.call(http.MethodDelete, header, nil)
 }
 
-func (e *endpoint) Put(header http.Header, body interface{}) (Response, error) {
+func (e *endpoint) Put(header Header, body interface{}) (Response, error) {
 	return e.call(http.MethodPut, header, body)
 }
 
-func (e *endpoint) Post(header http.Header,
+func (e *endpoint) Post(header Header,
 	body interface{}) (Response, error) {
 	return e.call(http.MethodPost, header, body)
 }
 
-func (e *endpoint) call(m string, header http.Header,
+func (e *endpoint) call(m string, header Header,
 	body interface{}) (Response, error) {
 
 	if _, ok := e.methods[m]; !ok {
@@ -79,7 +79,7 @@ func (e *endpoint) call(m string, header http.Header,
 		return nil, err
 	}
 
-	req.Header = header
+	header.applyTo(req)
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
