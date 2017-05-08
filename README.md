@@ -5,7 +5,7 @@
 
 # RESTful package for Go
 
-The REST package provides RESTful semantics to communicating with as REST
+The GoREST package provides RESTful semantics to communicating with as REST
 endpoint using JSON. The package user deals with Go types representing the 
 request and response models avoiding _stringly_ typed models and overuse of
 `map[string]interface{}`.
@@ -13,7 +13,7 @@ request and response models avoiding _stringly_ typed models and overuse of
 ## Installation
 
 ```bash
-go get github.com/domdavis/rest
+go get github.com/domdavis/gorest
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/domdavis/rest"
+	"github.com/domdavis/gorest"
 )
 
 type Version struct {
@@ -39,7 +39,7 @@ func main() {
 	h := http.Header{}
 	h.Add("Accept", "application/json")
 
-	e := rest.New("https://www.foaas.com/version", rest.MethodGet)
+	e := gorest.New("https://www.foaas.com/version", gorest.MethodGet)
 	r, err := e.Get(h)
 
 	if err != nil {
