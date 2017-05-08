@@ -1,4 +1,4 @@
-package rest_test
+package gorest_test
 
 import (
 	"testing"
@@ -6,10 +6,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/domdavis/rest"
-
 	"encoding/json"
 
+	"github.com/domdavis/gorest"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -19,7 +18,7 @@ func TestEndpoint_Get(t *testing.T) {
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
-		e := rest.New(s.URL, rest.MethodGet)
+		e := gorest.New(s.URL, gorest.MethodGet)
 		r, err := e.Get(h)
 
 		Convey("Will return a populated response", func() {
@@ -41,7 +40,7 @@ func TestEndpoint_Get(t *testing.T) {
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
-		e := rest.New(s.URL)
+		e := gorest.New(s.URL)
 		r, err := e.Get(h)
 
 		Convey("Will return a nil response", func() {
@@ -61,7 +60,7 @@ func TestEndpoint_Put(t *testing.T) {
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
-		e := rest.New(s.URL, rest.MethodPut)
+		e := gorest.New(s.URL, gorest.MethodPut)
 		r, err := e.Put(h, "request")
 
 		Convey("Will return a populated response", func() {
@@ -83,7 +82,7 @@ func TestEndpoint_Put(t *testing.T) {
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
-		e := rest.New(s.URL)
+		e := gorest.New(s.URL)
 		r, err := e.Put(h, "request")
 
 		Convey("Will return a nil response", func() {
@@ -103,7 +102,7 @@ func TestEndpoint_Post(t *testing.T) {
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
-		e := rest.New(s.URL, rest.MethodPost)
+		e := gorest.New(s.URL, gorest.MethodPost)
 		r, err := e.Post(h, "request")
 
 		Convey("Will return a populated response", func() {
@@ -125,7 +124,7 @@ func TestEndpoint_Post(t *testing.T) {
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
-		e := rest.New(s.URL)
+		e := gorest.New(s.URL)
 		r, err := e.Post(h, "request")
 
 		Convey("Will return a nil response", func() {
@@ -145,7 +144,7 @@ func TestEndpoint_Delete(t *testing.T) {
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
-		e := rest.New(s.URL, rest.MethodDelete)
+		e := gorest.New(s.URL, gorest.MethodDelete)
 		r, err := e.Delete(h)
 
 		Convey("Will return a populated response", func() {
@@ -167,7 +166,7 @@ func TestEndpoint_Delete(t *testing.T) {
 		s := testEndpoint(200, "body")
 		defer s.Close()
 
-		e := rest.New(s.URL)
+		e := gorest.New(s.URL)
 		r, err := e.Delete(h)
 
 		Convey("Will return a nil response", func() {
@@ -184,7 +183,7 @@ func TestEndpoint_Delete(t *testing.T) {
 func TestEndpoint(t *testing.T) {
 	Convey("Calling an endpoint with an invalid hostname", t, func() {
 
-		e := rest.New("http://\\", rest.MethodGet)
+		e := gorest.New("http://\\", gorest.MethodGet)
 		r, err := e.Get(http.Header{})
 
 		Convey("Will not return a response", func() {
@@ -203,7 +202,7 @@ func TestEndpoint(t *testing.T) {
 		s := testEndpoint(200, "response")
 		defer s.Close()
 
-		e := rest.New(s.URL, rest.MethodPut)
+		e := gorest.New(s.URL, gorest.MethodPut)
 		r, err := e.Put(h, make(chan string))
 
 		Convey("Will not return a response", func() {
@@ -217,7 +216,7 @@ func TestEndpoint(t *testing.T) {
 	})
 
 	Convey("Calling an endpoint with an invalid URL", t, func() {
-		e := rest.New("invalid", rest.MethodGet)
+		e := gorest.New("invalid", gorest.MethodGet)
 		r, err := e.Get(http.Header{})
 
 		Convey("Will not return a response", func() {

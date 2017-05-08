@@ -1,20 +1,19 @@
-package rest_test
+package gorest_test
 
 import (
 	"testing"
 
+	"github.com/domdavis/gorest"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"net/http/httptest"
 
 	"net/http"
-
-	"github.com/domdavis/rest"
 )
 
 func TestNew(t *testing.T) {
 	Convey("A valid HTTP response", t, func() {
-		r, err := rest.NewResponse(httptest.NewRecorder().Result())
+		r, err := gorest.NewResponse(httptest.NewRecorder().Result())
 
 		Convey("Will return a proteus response", func() {
 			So(r, ShouldNotBeNil)
@@ -28,7 +27,7 @@ func TestNew(t *testing.T) {
 	Convey("An invalid response", t, func() {
 		recorder := httptest.NewRecorder()
 		recorder.WriteHeader(http.StatusInternalServerError)
-		r, err := rest.NewResponse(recorder.Result())
+		r, err := gorest.NewResponse(recorder.Result())
 
 		Convey("Will return a default proteus response", func() {
 			So(r, ShouldNotBeNil)
@@ -48,7 +47,7 @@ func TestResponse_Location(t *testing.T) {
 		res := httptest.NewRecorder().Result()
 		res.Header.Add("Location", location)
 
-		r, err := rest.NewResponse(res)
+		r, err := gorest.NewResponse(res)
 		So(r, ShouldNotBeNil)
 		So(err, ShouldBeNil)
 
@@ -64,7 +63,7 @@ func TestResponse_Body(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		recorder.Write(body)
 
-		r, err := rest.NewResponse(recorder.Result())
+		r, err := gorest.NewResponse(recorder.Result())
 		So(r, ShouldNotBeNil)
 		So(err, ShouldBeNil)
 
@@ -79,7 +78,7 @@ func TestResponse_Unmarshal(t *testing.T) {
 		var o []int
 		recorder := httptest.NewRecorder()
 		recorder.WriteString("[1, 2]")
-		r, err := rest.NewResponse(recorder.Result())
+		r, err := gorest.NewResponse(recorder.Result())
 
 		So(r, ShouldNotBeNil)
 		So(err, ShouldBeNil)
@@ -103,7 +102,7 @@ func TestResponse_HTTPResponse(t *testing.T) {
 		recorder := httptest.NewRecorder()
 		recorder.Write([]byte("body"))
 
-		r, err := rest.NewResponse(recorder.Result())
+		r, err := gorest.NewResponse(recorder.Result())
 		So(r, ShouldNotBeNil)
 		So(err, ShouldBeNil)
 

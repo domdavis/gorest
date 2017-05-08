@@ -1,10 +1,10 @@
-package rest_test
+package gorest_test
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/domdavis/rest"
+	"github.com/domdavis/gorest"
 )
 
 type Version struct {
@@ -18,7 +18,7 @@ func ExampleNew() {
 	h := http.Header{}
 	h.Add("Accept", "application/json")
 
-	e := rest.New("https://www.foaas.com/version", rest.MethodGet)
+	e := gorest.New("https://www.foaas.com/version", gorest.MethodGet)
 	r, err := e.Get(h)
 
 	if err != nil {
