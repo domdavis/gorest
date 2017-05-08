@@ -27,39 +27,38 @@ type Endpoint interface {
 
 type endpoint struct {
 	url     string
-	methods map[string]struct{}
+	methods map[method]struct{}
 }
 
 // New returns a representation of a REST endpoint that will respond to the
 // provided HTTP methods (one or more from GET, PUT, POST and DELETE).
 func New(url string, methods ...method) Endpoint {
-	allowed := make(map[string]struct{}, len(methods))
+	allowed := make(map[method]struct{}, len(methods))
 
 	for _, m := range methods {
-		allowed[m.ToString()] = struct{}{}
+		allowed[m] = struct{}{}
 	}
 
 	return &endpoint{url: url, methods: allowed}
 }
 
 func (e *endpoint) Get(header Header) (Response, error) {
-	return e.call(http.MethodGet, header, nil)
+	return e.call(MethodGet, header, nil)
 }
 
 func (e *endpoint) Delete(header Header) (Response, error) {
-	return e.call(http.MethodDelete, header, nil)
+	return e.call(MethodDelete, header, nil)
 }
 
 func (e *endpoint) Put(header Header, body interface{}) (Response, error) {
-	return e.call(http.MethodPut, header, body)
+	return e.call(MethodPut, header, body)
 }
 
-func (e *endpoint) Post(header Header,
-	body interface{}) (Response, error) {
-	return e.call(http.MethodPost, header, body)
+func (e *endpoint) Post(header Header, body interface{}) (Response, error) {
+	return e.call(MethodPost, header, body)
 }
 
-func (e *endpoint) call(m string, header Header,
+func (e *endpoint) call(m method, header Header,
 	body interface{}) (Response, error) {
 
 	if _, ok := e.methods[m]; !ok {
@@ -73,7 +72,7 @@ func (e *endpoint) call(m string, header Header,
 	}
 
 	reader := bytes.NewReader(b)
-	req, err := http.NewRequest(m, e.url, reader)
+	req, err := http.NewRequest(m.ToString(), e.url, reader)
 
 	if err != nil {
 		return nil, err
